@@ -4,7 +4,7 @@
 * Tags: wordpress
 * Requires at least: 4.7.2
 * Tested up to: 4.9.5
-* Stable tag: 0.1
+* Stable tag: 0.2
 * License: GPLv2
 
 This plugin provides a mechanism for checking the main connection statistics for page requests to key pages on your site.
@@ -18,10 +18,12 @@ In our case, we run Prometheus, so a metrics endpoint is provided. We gather the
   scrape_interval: 60s
   honor_labels: true
   scheme: 'https'
-  metrics_path: '/?__metrics=1'
   basic_auth:
     username: 'prometheus'
     password: 'secret_token_known_to_your_monitoring_system'
+  metrics_path: '/'
+  params:
+    __metrics: [1]
   static_configs:
     - targets:
       - www.golder.org
@@ -29,7 +31,12 @@ In our case, we run Prometheus, so a metrics endpoint is provided. We gather the
 
 ```
 
+
 == Changelog ==
+
+= 0.2 =
+
+* Basic settings page. Configurable list of URIs to check. Optional Basic Auth.
 
 = 0.1 =
 
