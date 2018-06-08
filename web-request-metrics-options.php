@@ -107,8 +107,6 @@ function web_request_metrics_admin_menu() {
 		'manage_options',
 		__FILE__,
 		'web_request_metrics_options_page');
-
-	add_action('admin_enqueue_scripts', 'web_request_metrics_admin_scripts');
 }
 
 // Hooks to allow Web Request Metrics configuration settings and options to be set
