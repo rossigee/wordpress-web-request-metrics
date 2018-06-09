@@ -74,9 +74,9 @@ if(function_exists('wp_nonce_field') )
 }
 
 function web_request_metrics_options_update() {
-	update_option('metrics_auth_username', $_REQUEST['metrics_auth_username']);
-	update_option('metrics_auth_password', $_REQUEST['metrics_auth_password']);
-	update_option('metrics_uris_to_check', $_REQUEST['metrics_uris_to_check']);
+	update_option('metrics_auth_username', sanitize_text_field($_REQUEST['metrics_auth_username']));
+	update_option('metrics_auth_password', sanitize_text_field($_REQUEST['metrics_auth_password']));
+	update_option('metrics_uris_to_check', sanitize_textarea_field($_REQUEST['metrics_uris_to_check']));
 
 	?>
 	<div class="updated">
