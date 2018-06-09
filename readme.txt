@@ -4,7 +4,7 @@
 * Tags: wordpress
 * Requires at least: 4.7.2
 * Tested up to: 4.9.5
-* Stable tag: 0.2.1
+* Stable tag: 0.2.2
 * License: GPLv2
 
 This plugin provides a mechanism for checking the main connection statistics for page requests to key pages on your site.
@@ -33,6 +33,11 @@ In our case, we run Prometheus, so a metrics endpoint is provided. We gather the
 
 
 == Changelog ==
+
+= 0.2.2 =
+
+* Sanitize input fields on admin settings.
+* Make function names less generic for WP plugin upload approval.
 
 = 0.2.1 =
 
