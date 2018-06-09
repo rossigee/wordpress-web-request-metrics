@@ -12,7 +12,7 @@ License: GPLv2
 
 require_once(dirname(__FILE__) . "/web-request-metrics-options.php");
 
-function fetch_stats($uri) {
+function metrics_fetch_stats($uri) {
   $url = get_site_url().$uri;
   $ch = curl_init($url);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -44,7 +44,7 @@ function metrics_request_parser($wp_query) {
 }
 add_action("parse_request", "metrics_request_parser");
 
-function output_metric($id, $uri, $desc, $type, $all_stats, $key) {
+function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key) {
   echo "# HELP ".$id." ".$desc."\n";
   echo "# TYPE ".$id." ".$type."\n";
 
@@ -84,7 +84,7 @@ function metrics_handler__handle_request($wp_query) {
       continue;
     }
 
-    $stats[$uri] = fetch_stats($uri);
+    $stats[$uri] = metrics_fetch_stats($uri);
   }
 
   if(count($stats) < 1) {
@@ -95,37 +95,37 @@ function metrics_handler__handle_request($wp_query) {
 
   header("Content-Type: text/plain");
 
-  output_metric("web_request_header_size", $uri,
+  metrics_output_metric("web_request_header_size", $uri,
     "The number of bytes in the HTTP header.",
     "gauge",
     $stats, 'header_size'
   );
 
-  output_metric("web_request_namelookup_time", $uri,
+  metrics_output_metric("web_request_namelookup_time", $uri,
     "The number of milliseconds taken in the hostname lookup.",
     "gauge",
     $stats, 'namelookup_time'
   );
 
-  output_metric("web_request_connect_time", $uri,
+  metrics_output_metric("web_request_connect_time", $uri,
     "The number of milliseconds taken in the TCP connection.",
     "gauge",
     $stats, 'connect_time'
   );
 
-  output_metric("web_request_pretransfer_time", $uri,
+  metrics_output_metric("web_request_pretransfer_time", $uri,
     "The number of milliseconds taken in the pretransfer stage.",
     "gauge",
     $stats, 'pretransfer_time'
   );
 
-  output_metric("web_request_starttransfer_time", $uri,
+  metrics_output_metric("web_request_starttransfer_time", $uri,
     "The number of milliseconds taken in the start transfer stage.",
     "gauge",
     $stats, 'starttransfer_time'
   );
 
-  output_metric("web_request_total_time", $uri,
+  metrics_output_metric("web_request_total_time", $uri,
     "The number of milliseconds taken in total.",
     "gauge",
     $stats, 'total_time'
