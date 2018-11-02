@@ -102,8 +102,8 @@ function web_request_metrics_admin_menu() {
 	global $web_request_metrics_options_page;
 
 	$web_request_metrics_options_page = add_options_page(
-		__('Web Request Metrics', 'web-request-metrics'),
-		__('Web Request Metrics', 'web-request-metrics'),
+		__('Web Metrics', 'web-request-metrics'),
+		__('Web Metrics', 'web-request-metrics'),
 		'manage_options',
 		__FILE__,
 		'web_request_metrics_options_page');
