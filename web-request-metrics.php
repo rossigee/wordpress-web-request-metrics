@@ -62,6 +62,8 @@ function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key) {
 function metrics_handler__handle_request($wp_query) {
   global $uris_to_check;
 
+  header('Cache-Control: no-cache');
+
   $auth_username = get_option("metrics_auth_username");
   $auth_password = get_option("metrics_auth_password");
   if($auth_username != "" && $auth_password != "") {
