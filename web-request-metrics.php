@@ -62,16 +62,14 @@ function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key) {
 function metrics_handler__handle_request($wp_query) {
   global $uris_to_check;
 
-  header('Cache-Control: no-cache');
-
   $auth_username = get_option("metrics_auth_username");
   $auth_password = get_option("metrics_auth_password");
   if($auth_username != "" && $auth_password != "") {
     $username = $_SERVER['PHP_AUTH_USER'];
     $password = $_SERVER['PHP_AUTH_PW'];
     if($auth_username != $username || $auth_password != $password) {
-      header('WWW-Authenticate: Basic realm="Metrics"');
       header("HTTP/1.1 401 Unauthorized");
+      header('WWW-Authenticate: Basic realm="Metrics"');
       echo "Authorisation required.";
       exit(0);
     }
@@ -96,6 +94,7 @@ function metrics_handler__handle_request($wp_query) {
   }
 
   header("Content-Type: text/plain");
+  header('Cache-Control: no-cache');
 
   metrics_output_metric("web_request_header_size", $uri,
     "The number of bytes in the HTTP header.",
