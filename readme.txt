@@ -3,7 +3,7 @@
 * Contributors: rossigee
 * Tags: wordpress
 * Requires at least: 4.7.2
-* Tested up to: 4.9.5
+* Tested up to: 5.3.0
 * Stable tag: 0.2.3
 * License: GPLv2
 
