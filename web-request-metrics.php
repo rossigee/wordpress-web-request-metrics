@@ -4,7 +4,7 @@
 Plugin Name: Web Request Metrics
 Plugin URI: https://wordpress.org/plugins/web-request-metrics
 Description: Plugin to measure the HTTP connection metrics for key pages on your site
-Version: 0.2.4
+Version: 0.3.0
 Author: Ross Golder <ross@golder.org>
 Author URI: http://www.golder.org/
 License: GPLv2
@@ -44,7 +44,7 @@ function metrics_request_parser($wp_query) {
 }
 add_action("parse_request", "metrics_request_parser");
 
-function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key) {
+function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key, $tags) {
   echo "# HELP ".$id." ".$desc."\n";
   echo "# TYPE ".$id." ".$type."\n";
 
@@ -53,7 +53,14 @@ function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key) {
     if(substr($key, -5) == "_time") {
       $value = intval($value * 1000);
     }
-    echo $id."{uri=\"".$uri."\"} ".$value."\n";
+    $tagstrs = array();
+    foreach($tags as $tagkey => $tagvalue) {
+      if($tagkey != "" && $tagvalue != "") {
+        array_push($tagstrs, $tagkey."=\"".$tagvalue."\"");
+      }
+    }
+    array_push($tagstrs, "uri=\"".$uri."\"");
+    echo $id."{".join(", ",$tagstrs)."} ".$value."\n";
   }
 
   echo "\n";
@@ -93,42 +100,51 @@ function metrics_handler__handle_request($wp_query) {
     exit(0);
   }
 
+  $site =
+  $variant = get_option("metrics_variant");
+
   header("Content-Type: text/plain");
   header('Cache-Control: no-cache');
 
+  $tags = array(
+    'site' => get_option("metrics_site"),
+    'variant' => get_option("metrics_variant")
+  );
   metrics_output_metric("web_request_header_size", $uri,
     "The number of bytes in the HTTP header.",
     "gauge",
-    $stats, 'header_size'
+    $stats, 'header_size', $tags
   );
 
   metrics_output_metric("web_request_namelookup_time", $uri,
     "The number of milliseconds taken in the hostname lookup.",
     "gauge",
-    $stats, 'namelookup_time'
+    $stats, 'namelookup_time', $tags
   );
 
   metrics_output_metric("web_request_connect_time", $uri,
     "The number of milliseconds taken in the TCP connection.",
     "gauge",
-    $stats, 'connect_time'
+    $stats, 'connect_time', $tags
   );
 
   metrics_output_metric("web_request_pretransfer_time", $uri,
     "The number of milliseconds taken in the pretransfer stage.",
     "gauge",
-    $stats, 'pretransfer_time'
+    $stats, 'pretransfer_time', $tags
   );
 
   metrics_output_metric("web_request_starttransfer_time", $uri,
     "The number of milliseconds taken in the start transfer stage.",
     "gauge",
-    $stats, 'starttransfer_time'
+    $stats, 'starttransfer_time', $tags
   );
 
   metrics_output_metric("web_request_total_time", $uri,
     "The number of milliseconds taken in total.",
     "gauge",
-    $stats, 'total_time'
+    $stats, 'total_time', $tags
   );
+
+  exit(0);
 }

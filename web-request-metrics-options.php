@@ -51,6 +51,26 @@ if(function_exists('wp_nonce_field') )
   </tr>
 </table>
 
+<h3>Site tags</h3>
+
+<p>Extra tags to help group sites (i.e. 'Main site', 'Client site') and their variants (i.e. 'Production' or 'QA').</p>
+
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row">Site</th>
+		<td>
+			<input type="text" name="metrics_site" value="<?php echo get_option('metrics_site'); ?>" />
+		</td>
+	</tr>
+	<tr>
+		<th scope="row">Variant</th>
+		<td>
+			<input type="text" name="metrics_variant" value="<?php echo get_option('metrics_variant'); ?>" />
+		</td>
+  </tr>
+</table>
+
+
 <h3>URIs to check</h3>
 
 <p>List the URIs you wish to provide metrics for in your metrics requests, one URI per line.</p>
@@ -76,6 +96,8 @@ if(function_exists('wp_nonce_field') )
 function web_request_metrics_options_update() {
 	update_option('metrics_auth_username', sanitize_text_field($_REQUEST['metrics_auth_username']));
 	update_option('metrics_auth_password', sanitize_text_field($_REQUEST['metrics_auth_password']));
+	update_option('metrics_site', sanitize_text_field($_REQUEST['metrics_site']));
+	update_option('metrics_variant', sanitize_text_field($_REQUEST['metrics_variant']));
 	update_option('metrics_uris_to_check', sanitize_textarea_field($_REQUEST['metrics_uris_to_check']));
 
 	?>
@@ -92,6 +114,12 @@ function web_request_metrics_admin_init() {
 	}
 	if(!get_option('metrics_auth_password')) {
 		update_option('metrics_auth_password', '');
+	}
+	if(!get_option('metrics_auth_site')) {
+		update_option('metrics_auth_site', '');
+	}
+	if(!get_option('metrics_auth_variant')) {
+		update_option('metrics_auth_variant', '');
 	}
 	if(!get_option('metrics_uris_to_check')) {
 		update_option('metrics_uris_to_check', implode("\n", array("/", "/wp-login.php")));
