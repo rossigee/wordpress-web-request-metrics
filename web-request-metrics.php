@@ -12,15 +12,13 @@ License: GPLv2
 
 require_once(dirname(__FILE__) . "/web-request-metrics-options.php");
 
-function metrics_fetch_stats($uri) {
+function metrics_curl_handle($uri) {
   $url = get_site_url().$uri;
   $ch = curl_init($url);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 30);
   curl_exec($ch);
-  $stats = curl_getinfo($ch);
-  curl_close($ch);
-
-  return $stats;
+  return $ch;
 }
 
 function metrics_handler_init() {
@@ -69,6 +67,7 @@ function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key, $tags)
 function metrics_handler__handle_request($wp_query) {
   global $uris_to_check;
 
+  // If basic auth configured, apply it
   $auth_username = get_option("metrics_auth_username");
   $auth_password = get_option("metrics_auth_password");
   if($auth_username != "" && $auth_password != "") {
@@ -82,26 +81,40 @@ function metrics_handler__handle_request($wp_query) {
     }
   }
 
+  // Create array of curl handles, one per URI to fetch
   $uris_to_check_opt = get_option("metrics_uris_to_check");
   $uris_to_check = explode("\n", $uris_to_check_opt);
-  $stats = array();
+  $chs = array();
+  $mh = curl_multi_init();
   foreach($uris_to_check as $uri) {
     $uri = rtrim($uri);
     if($uri == "") {
       continue;
     }
-
-    $stats[$uri] = metrics_fetch_stats($uri);
+    $chs[$uri] = metrics_curl_handle($uri);
+    curl_multi_add_handle($mh, $chs[$uri]);
   }
 
+  // Process the curl requests in parallel
+  $running = null;
+  do {
+    curl_multi_exec($mh, $running);
+  } while ($running);
+
+  // Close curl handles and extract results
+  $stats = array();
+  foreach($chs as $uri => $ch) {
+    curl_multi_remove_handle($mh, $ch);
+    $stats[$uri] = curl_getinfo($ch);
+  }
+  curl_multi_close($mh);
+
+  // Extract stats from each
   if(count($stats) < 1) {
     // Nothing to see here, move along.
     header("HTTP/1.1 503 Service Unavailable");
     exit(0);
   }
-
-  $site =
-  $variant = get_option("metrics_variant");
 
   header("Content-Type: text/plain");
   header('Cache-Control: no-cache');
