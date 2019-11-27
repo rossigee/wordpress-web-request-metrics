@@ -58,7 +58,7 @@ function metrics_output_metric($id, $uri, $desc, $type, $all_stats, $key, $tags)
       }
     }
     array_push($tagstrs, "uri=\"".$uri."\"");
-    echo $id."{".join(", ",$tagstrs)."} ".$value."\n";
+    echo $id."{".join(",",$tagstrs)."} ".$value."\n";
   }
 
   echo "\n";
