@@ -4,7 +4,7 @@
 Plugin Name: Web Request Metrics
 Plugin URI: https://wordpress.org/plugins/web-request-metrics
 Description: Plugin to measure the HTTP connection metrics for key pages on your site
-Version: 0.3.0
+Version: 0.4.0
 Author: Ross Golder <ross@golder.org>
 Author URI: http://www.golder.org/
 License: GPLv2
